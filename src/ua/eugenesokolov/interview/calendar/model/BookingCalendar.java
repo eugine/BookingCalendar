@@ -26,20 +26,36 @@ public class BookingCalendar {
 
     public boolean addBooking(CalendarEvent event) {
         LocalDate date = event.getDay();
-        Set<CalendarEvent> dayEvents = getBookingForDay(date);
+        if (!workingHours.includeInterval(event.getBookingTime())) {
+                return false;
+        }
+                        
+        Set<CalendarEvent> dayEvents = getBookingsForDay(date);
         if (dayEvents == null) {
             addEvent(date, event);
             return true;
+        } else {
+            EventTime bookingTime = event.getBookingTime();
+            for(CalendarEvent dayEvent: dayEvents) {
+                if (dayEvent.getBookingTime().overlapInterval(bookingTime)) {
+                    return false;
+                }
+            }
+            addEvent(date, event);
         }
-        return false;
+        return true;
     }
 
-    public Set<CalendarEvent> getBookingForDay(LocalDate date) {
+    public Set<CalendarEvent> getBookingsForDay(LocalDate date) {
         return events.get(date);
     }
     
+    public Set<LocalDate> getDaysWithEvents() {
+        return events.keySet();
+    }
+    
     private void addEvent(LocalDate date, CalendarEvent event) {
-        Set<CalendarEvent> dayEvents = getBookingForDay(date);
+        Set<CalendarEvent> dayEvents = getBookingsForDay(date);
         if (dayEvents == null) {
             dayEvents = new TreeSet<CalendarEvent>(new CalendarEventComparator<CalendarEvent>());
             dayEvents.add(event);
@@ -49,8 +65,12 @@ public class BookingCalendar {
         }
     }
     
+    public int getDayCountWithEvents() {
+        return events.size();
+    }
+    
     public int getEventCountForDay(LocalDate date) {
-        Set<CalendarEvent> events = getBookingForDay(date);
+        Set<CalendarEvent> events = getBookingsForDay(date);
         if (events == null) {
             return 0;
         }

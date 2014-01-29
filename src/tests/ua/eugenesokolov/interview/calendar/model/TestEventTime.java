@@ -75,9 +75,9 @@ public class TestEventTime {
         assertTrue(et.overlapInterval(new EventTime(14, 30, 16, 25)));
         assertTrue(et.overlapInterval(new EventTime(8, 59, 6)));
         assertTrue(et.overlapInterval(new EventTime(9, 01, 17, 01)));
-        assertTrue(et.overlapInterval(new EventTime(8, 59, 9, 0)));
-        assertTrue(et.overlapInterval(new EventTime(17, 0, 17, 1)));
         
+        assertFalse(et.overlapInterval(new EventTime(8, 59, 9, 0)));
+        assertFalse(et.overlapInterval(new EventTime(17, 0, 17, 1)));
         assertFalse(et.overlapInterval(new EventTime(8, 58, 8, 59)));        
         assertFalse(et.overlapInterval(new EventTime(17, 1, 17, 2)));
         assertFalse(et.overlapInterval(new EventTime(6, 0, 1)));

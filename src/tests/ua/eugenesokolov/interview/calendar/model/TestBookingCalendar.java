@@ -35,11 +35,13 @@ public class TestBookingCalendar {
         Employee employee = new Employee("BookingEvent");
         EventTime bookingTime = new EventTime(14, 0, 2);
         
-        assertNull(calendar.getBookingForDay(today));
+        assertNull(calendar.getBookingsForDay(today));
         assertTrue(calendar.addBooking(new CalendarEvent(today, employee, bookingTime)));
         assertTrue(calendar.addBooking(new CalendarEvent(tomorrow, employee, bookingTime)));
         assertEquals(1, calendar.getEventCountForDay(today));
         assertEquals(1, calendar.getEventCountForDay(tomorrow));
+        
+        assertEquals(2, calendar.getDayCountWithEvents());
     }
     
     @Test
@@ -53,11 +55,48 @@ public class TestBookingCalendar {
         EventTime bookingTime3 = new EventTime(16, 0, 2);
         EventTime bookingTime4 = new EventTime(18, 0, 2);
         
-        assertTrue(calendar.addBooking(new CalendarEvent(today, employee, bookingTime1)));
-        assertTrue(calendar.addBooking(new CalendarEvent(today, employee, bookingTime2)));
-        assertTrue(calendar.addBooking(new CalendarEvent(today, employee, bookingTime3)));
-        assertTrue(calendar.addBooking(new CalendarEvent(today, employee, bookingTime4)));
+        assertFalse(calendar.addBooking(new CalendarEvent(today, employee, bookingTime1)));
+        assertFalse(calendar.addBooking(new CalendarEvent(today, employee, bookingTime2)));
+        assertFalse(calendar.addBooking(new CalendarEvent(today, employee, bookingTime3)));
+        assertFalse(calendar.addBooking(new CalendarEvent(today, employee, bookingTime4)));
 
-        assertNull(calendar.getBookingForDay(today));
+        assertNull(calendar.getBookingsForDay(today));
     }
+    
+    @Test
+    public void shouldntAddBookingForAlreadyBookedTime() {
+        BookingCalendar calendar = getBookingCalendar();
+        //event
+        LocalDate today = LocalDate.now();
+        Employee employee = new Employee("BookingEvent");
+        EventTime bookingTime = new EventTime(14, 0, 2);
+        
+        EventTime bookingTime1 = new EventTime(13, 0, 2);
+        EventTime bookingTime2 = new EventTime(14, 0, 2);
+        EventTime bookingTime3 = new EventTime(14, 0, 2);
+        EventTime bookingTime4 = new EventTime(14, 0, 2);
+        
+        EventTime bookingTime5 = new EventTime(10, 0, 2);
+        
+        assertTrue(calendar.addBooking(new CalendarEvent(today, employee, bookingTime)));
+
+        assertFalse(calendar.addBooking(new CalendarEvent(today, employee, bookingTime1)));
+        assertFalse(calendar.addBooking(new CalendarEvent(today, employee, bookingTime2)));
+        assertFalse(calendar.addBooking(new CalendarEvent(today, employee, bookingTime3)));
+        assertFalse(calendar.addBooking(new CalendarEvent(today, employee, bookingTime4)));
+
+        assertTrue(calendar.addBooking(new CalendarEvent(today, employee, bookingTime5)));
+
+        assertEquals(2, calendar.getEventCountForDay(today));
+    }
+    
 }
+
+//^(\d{4}-\d{2}-\d{2})\s*(\d{2}:\d{2}:\d{2})\s*(\w*)$
+//2011-11-22 22:32:22 fds
+
+//^(\d{4}-\d{2}-\d{2})\s*(\d{2}:\d{2})\s*(\w*)$
+//2011-11-22 22:32 2
+
+//^(\d{4})\s*(\d{4})$
+//0600 0700
