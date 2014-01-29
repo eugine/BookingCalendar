@@ -1,4 +1,0 @@
-BookingCalendar
-===============
-
-Booking Calendar

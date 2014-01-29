@@ -17,7 +17,7 @@ public class TestCalendarEventComparator {
         CalendarEvent event1 = new CalendarEvent(date1, null, null);
         CalendarEvent event2 = new CalendarEvent(date2, null, null);
         
-        CalendarEventComparator cmp = new CalendarEventComparator();
+        CalendarEventComparator<CalendarEvent> cmp = new CalendarEventComparator<CalendarEvent>();
         
         assertTrue(cmp.compare(event1, event2) < 0);
         assertTrue(cmp.compare(event2, event1) > 0);

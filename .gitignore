@@ -1,3 +1,5 @@
 build
 nbproject
 *.class
+.classpath
+.project
